@@ -1,279 +1,310 @@
-# RiskView
+<div align="center">
 
-RiskView is a mobile application that helps travelers stay aware of scams and safety risks in unfamiliar locations.
+<img src="https://img.shields.io/badge/RiskView-Safety%20First-red?style=for-the-badge&logo=shield&logoColor=white" alt="RiskView" width="300"/>
 
-The platform allows users to view nearby safety reports, submit new reports, and receive AI-generated insights about local safety conditions.
+# 🛡️ RiskView
 
-Unlike traditional travel apps that focus mainly on attractions or accommodations, RiskView focuses on **community-driven safety awareness**.
+### *Your Community-Powered Travel Safety Companion*
 
----
+**Stay aware. Stay safe. Travel smart.**
 
-## Problem
+[![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
 
-When people travel to unfamiliar places they often do not know about:
+<br/>
 
-- common scams
-- unsafe areas
-- dangerous roads
-- suspicious local activities
+> 🌍 **RiskView** is a mobile application that empowers travelers with real-time, community-driven safety intelligence — helping you navigate unfamiliar places with confidence.
 
-Most travel applications prioritize **tourism information**, not **traveler safety**.
+<br/>
 
-As a result, travelers may unknowingly enter unsafe situations.
+[![Status](https://img.shields.io/badge/Status-In%20Development-yellow?style=flat-square)](/)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](/)
+[![Author](https://img.shields.io/badge/Author-Karthik%20Paila-purple?style=flat-square)](/)
 
-RiskView addresses this by allowing travelers to **share real experiences and warnings with others**.
-
----
-
-## Solution
-
-RiskView provides a community-driven platform where travelers can:
-
-- view nearby safety reports on a map
-- report scams or dangerous situations
-- vote on reports to indicate reliability
-- receive alerts when entering risky areas
-- view AI summaries of nearby incidents
-- ask safety-related questions about a location
-
-This helps travelers make **more informed and safer decisions**.
+</div>
 
 ---
 
-## Key Features
+## 📌 Table of Contents
 
-### Location Based Reports
-
-Users can view reports within a nearby radius based on their current location.
-
-Reports include:
-
-- scams
-- dangerous areas
-- safety issues
-
----
-
-### Community Reporting
-
-Users can submit reports describing incidents they experienced.
-
-Each report contains:
-
-- location
-- category (scam or danger)
-- title
-- description
+- [🚨 The Problem](#-the-problem)
+- [💡 The Solution](#-the-solution)
+- [✨ Key Features](#-key-features)
+- [🏗️ Architecture](#️-architecture)
+- [🛠️ Technology Stack](#️-technology-stack)
+- [📡 API Endpoints](#-api-endpoints)
+- [📁 Project Structure](#-project-structure)
+- [🚀 Current Status](#-current-status)
+- [🔮 Future Improvements](#-future-improvements)
+- [👤 Author](#-author)
 
 ---
 
-### Voting System
+## 🚨 The Problem
 
-Users can upvote or downvote reports.
+When traveling to unfamiliar places, most people are completely unaware of:
 
-Voting helps identify reports that are more reliable.
+| ⚠️ Risk Type | Description |
+|---|---|
+| 🎭 **Common Scams** | Tourist traps, fake services, and deceptive schemes |
+| 🏚️ **Unsafe Areas** | Neighborhoods with elevated crime or danger |
+| 🚗 **Dangerous Roads** | Hazardous routes and traffic black spots |
+| 👁️ **Suspicious Activity** | Local threats that aren't covered by guidebooks |
 
----
-
-### Travel Mode
-
-Travel Mode automatically checks for nearby reports.
-
-When enabled:
-
-- nearby reports are fetched every 30 seconds
-- users receive notifications if multiple reports appear nearby
+> 💬 *Most travel apps prioritize attractions and restaurants — not your **safety**.*
+> RiskView was built to change that.
 
 ---
 
-### AI Assisted Safety Insights
+## 💡 The Solution
 
-RiskView includes an AI service that analyzes reports.
+RiskView provides a **community-driven safety platform** where every traveler becomes a contributor to a shared safety network.
 
-#### Category Validation
+<div align="center">
 
-AI checks whether the report description matches the selected category.
+```
+👤 Travelers Report  →  📍 Map Displays Risks  →  🤖 AI Analyzes Data  →  🔔 You Stay Safe
+```
 
-This helps reduce incorrect reports.
+</div>
 
----
+**With RiskView, you can:**
 
-#### Safety Summary
-
-Users can generate a summary of nearby reports.
-
-This helps travelers quickly understand the overall safety situation.
-
----
-
-#### RAG Question System
-
-Users can ask questions such as:
-
-- "Is this area safe at night?"
-- "Are there scams near this place?"
-
-The system retrieves nearby reports and generates answers based on them.
+- 🗺️ View nearby safety reports pinned on a live map
+- 📝 Submit reports about scams or dangerous situations you encounter
+- 👍 Vote on reports to surface the most reliable warnings
+- 🔔 Receive automatic alerts when entering risky zones
+- 🤖 Get AI-generated summaries of local safety conditions
+- ❓ Ask natural language questions like *"Is this area safe at night?"*
 
 ---
 
-### Emergency Assistance
+## ✨ Key Features
 
-The map also displays nearby emergency services including:
+### 📍 Location-Based Reports
+> See what's happening around you — right now.
 
-- hospitals
-- police stations
-
-Users can quickly access emergency contacts if needed.
-
----
-
-## Architecture
-
-The system consists of three main components.
-
-Mobile Client (React Native + Expo)
-↓
-Backend API (Node.js + Express + MongoDB)
-↓
-AI Service (Python + FastAPI + LangChain + Groq)
-
+Reports are displayed on an interactive map based on your current location. Each pin represents a real incident reported by a fellow traveler, covering:
+- 🎭 Scams & fraud
+- ⚠️ Dangerous zones
+- 🚨 Active safety issues
 
 ---
 
-## Technology Stack
+### 📣 Community Reporting
+> Your experience protects the next traveler.
 
-### Mobile Application
+Submit detailed incident reports with:
 
-- React Native
-- Expo
-- NativeWind (TailwindCSS)
-- Redux Toolkit
-- Axios
-- React Navigation
-- Expo Location
-- React Native Maps
-
----
-
-### Backend API
-
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- JWT Authentication
-- bcrypt
+```
+📌 Location       →  Exact coordinates of the incident
+🏷️ Category       →  Scam or Danger
+📋 Title          →  Short summary of the event
+📄 Description    →  Full account of what happened
+```
 
 ---
 
-### AI Service
+### 🗳️ Voting System
+> Crowd-sourced reliability filtering.
 
-- Python
-- FastAPI
-- LangChain
-- FAISS
-- HuggingFace Embeddings
-- Groq LLM
-
-Model used:
-
-
-meta-llama/llama-4-maverick-17b-128e-instruct
-
+Every report can be **upvoted ✅** or **downvoted ❌** by the community.  
+This surfaces trustworthy reports and buries inaccurate ones — keeping the platform reliable.
 
 ---
 
-## API Endpoints
+### 🚗 Travel Mode
+> Hands-free, continuous safety monitoring.
 
-### Authentication
+Enable Travel Mode and RiskView watches your back automatically:
 
-
-POST /api/auth/register
-POST /api/auth/login
-GET /api/auth/me
-PUT /api/auth/update-push-token
-
-
-### Reports
-
-
-GET /api/reports/nearby
-GET /api/reports
-GET /api/reports/:id
-POST /api/reports
-POST /api/reports/:id/upvote
-POST /api/reports/:id/downvote
-DELETE /api/reports/:id
-
-
-### Notifications
-
-
-GET /api/notifications
-GET /api/notifications/unread/count
-PUT /api/notifications/:id/read
-PUT /api/notifications/read/all
-DELETE /api/notifications/:id
-
-
-### AI Services
-
-
-POST /api/ml/validate-category
-POST /api/ml/summarize-all
-POST /api/ml/ask-rag
-
+- 🔄 Fetches nearby reports **every 30 seconds**
+- 🔔 Sends **push notifications** when multiple hazards are detected nearby
+- 📡 Works in the background while you explore
 
 ---
 
-## Project Structure
+### 🤖 AI-Assisted Safety Insights
 
+Powered by **LangChain + Groq LLM (`meta-llama/llama-4-maverick-17b-128e-instruct`)**
 
-riskview
+#### 🔍 Category Validation
+AI cross-checks whether your report's description actually matches your chosen category — reducing noise and improving data quality.
+
+#### 📊 Safety Summary
+Generate an instant AI-written briefing of all nearby incidents. Get the big picture in seconds before stepping into unfamiliar territory.
+
+#### 💬 RAG Question System
+Ask anything about a location:
+```
+"Are there any scams near this market?"
+"Is it safe to walk here at night?"
+"What should I watch out for in this area?"
+```
+The AI retrieves relevant nearby reports and crafts a **context-aware answer** just for you.
+
+---
+
+### 🆘 Emergency Assistance
+> Help is always one tap away.
+
+The map surfaces **nearby emergency services** including:
+
+- 🏥 Hospitals
+- 🚔 Police Stations
+
+Quick-access emergency contacts are always visible when you need them most.
+
+---
+
+## 🏗️ Architecture
+
+RiskView follows a clean **three-tier architecture**:
+
+```
+┌─────────────────────────────────────────┐
+│         📱 Mobile Client                │
+│     React Native + Expo                 │
+└──────────────┬──────────────────────────┘
+               │  HTTP / REST API
+┌──────────────▼──────────────────────────┐
+│         ⚙️  Backend API                 │
+│     Node.js + Express + MongoDB         │
+└──────────────┬──────────────────────────┘
+               │  Internal Service Calls
+┌──────────────▼──────────────────────────┐
+│         🤖 AI Service                   │
+│   Python + FastAPI + LangChain + Groq   │
+└─────────────────────────────────────────┘
+```
+
+---
+
+## 🛠️ Technology Stack
+
+<details>
+<summary><b>📱 Mobile Application</b></summary>
+
+<br/>
+
+| Technology | Purpose |
+|---|---|
+| ![React Native](https://img.shields.io/badge/React_Native-20232A?style=flat&logo=react&logoColor=61DAFB) | Cross-platform mobile framework |
+| ![Expo](https://img.shields.io/badge/Expo-000020?style=flat&logo=expo&logoColor=white) | Development & build toolchain |
+| ![TailwindCSS](https://img.shields.io/badge/NativeWind-38B2AC?style=flat&logo=tailwind-css&logoColor=white) | Utility-first styling |
+| ![Redux](https://img.shields.io/badge/Redux_Toolkit-764ABC?style=flat&logo=redux&logoColor=white) | Global state management |
+| ![Axios](https://img.shields.io/badge/Axios-5A29E4?style=flat&logo=axios&logoColor=white) | HTTP client |
+| 🗺️ React Native Maps | Interactive map rendering |
+| 📍 Expo Location | GPS & geolocation access |
+| 🧭 React Navigation | Screen routing & navigation |
+
+</details>
+
+<details>
+<summary><b>⚙️ Backend API</b></summary>
+
+<br/>
+
+| Technology | Purpose |
+|---|---|
+| ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=flat&logo=node.js&logoColor=white) | Server runtime |
+| ![Express](https://img.shields.io/badge/Express.js-404D59?style=flat&logo=express) | REST API framework |
+| ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=flat&logo=mongodb&logoColor=white) | NoSQL database |
+| ![Mongoose](https://img.shields.io/badge/Mongoose-880000?style=flat) | MongoDB ODM |
+| 🔐 JWT | Stateless authentication |
+| 🔒 bcrypt | Password hashing |
+
+</details>
+
+<details>
+<summary><b>🤖 AI Service</b></summary>
+
+<br/>
+
+| Technology | Purpose |
+|---|---|
+| ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white) | Service language |
+| ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi) | High-performance API framework |
+| 🦜 LangChain | LLM orchestration |
+| 🔎 FAISS | Vector similarity search |
+| 🤗 HuggingFace Embeddings | Text vectorization |
+| ⚡ Groq LLM | Ultra-fast AI inference |
+
+**Model:** `meta-llama/llama-4-maverick-17b-128e-instruct`
+
+</details>
+
+## 📁 Project Structure
+
+```
+riskview/
 │
-├── client
-│ └── React Native Expo mobile application
+├── 📱 client/
+│   └── React Native Expo mobile application
 │
-├── server
-│ └── Node.js Express backend API
+├── ⚙️  server/
+│   └── Node.js Express backend API
 │
-├── ml-service
-│ └── Python FastAPI AI analysis service
+├── 🤖 ml-service/
+│   └── Python FastAPI AI analysis service
 │
-└── README.md
-
+└── 📄 README.md
+```
 
 ---
 
-## Current Status
+## 🚀 Current Status
 
-The project is currently under development.
+> 🟡 **Active Development**
 
-Deployment of the following components is planned:
+The following components are currently being finalized for deployment:
 
-- Backend API
-- AI service
-- Mobile application build
+| Component | Status |
+|---|---|
+| ⚙️ Backend API | 🔄 Deployment Pending |
+| 🤖 AI Service | 🔄 Deployment Pending |
+| 📱 Mobile App Build | 🔄 Deployment Pending |
 
-Deployment instructions will be added once hosting is completed.
-
----
-
-## Future Improvements
-
-Possible future enhancements include:
-
-- trust scoring for reports
-- spam detection improvements
-- advanced map visualization
-- multilingual support
-- safety trend analysis
+> 📌 Deployment instructions will be added once hosting is finalized.
 
 ---
 
-## Author
+## 🔮 Future Improvements
 
-Karthik Paila
+Exciting features on the roadmap:
 
-Engineering student focused on building software systems that solve real-world problems.
+| Feature | Description |
+|---|---|
+| 🏅 **Trust Scoring** | Dynamic credibility scores for frequent reporters |
+| 🛡️ **Spam Detection** | Advanced AI filtering of false or duplicate reports |
+| 🗺️ **Advanced Map Visualization** | Heatmaps, clusters, and risk zone overlays |
+| 🌐 **Multilingual Support** | Reports and AI responses in multiple languages |
+| 📈 **Safety Trend Analysis** | Historical patterns and predictive risk insights |
+
+---
+
+## 👤 Author
+
+<div align="center">
+
+### Karthik Paila
+
+*Engineering student focused on building software systems that solve real-world problems.*
+
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/)
+
+</div>
+
+---
+
+<div align="center">
+
+**⭐ If RiskView helps you travel safer, consider giving it a star!**
+
+*Made with ❤️ for safer travels around the world*
+
+</div>

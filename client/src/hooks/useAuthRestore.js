@@ -47,11 +47,12 @@ export const useAuthRestore = () => {
           }
         } else {
           console.log('⚠️ No auth token or userId found in AsyncStorage');
-          dispatch(setIsRestoring(false));
         }
       } catch (error) {
         console.error('❌ Error restoring auth:', error);
         dispatch(clearAuth());
+      } finally {
+        dispatch(setIsRestoring(false));
       }
     };
 

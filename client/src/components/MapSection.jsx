@@ -126,15 +126,35 @@ export default function MapSection({ selectedLocation }) {
     initializeMap();
   }, [selectedLocation]);
 
+  const fetchNominatimJson = async (url) => {
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+        'User-Agent': 'RiskView/1.0'
+      }
+    });
+
+    const bodyText = await response.text();
+
+    if (!response.ok) {
+      throw new Error(`Nominatim request failed (${response.status}): ${bodyText.slice(0, 120)}`);
+    }
+
+    try {
+      return JSON.parse(bodyText);
+    } catch (parseError) {
+      throw new Error(`Nominatim returned non-JSON: ${bodyText.slice(0, 120)}`);
+    }
+  };
+
   const fetchEmergencyServices = async (latitude, longitude) => {
     try {
       setFetchingEmergency(true);
 
       // Fetch hospitals using Nominatim
-      const hospitalsResponse = await fetch(
+      const hospitalsData = await fetchNominatimJson(
         `https://nominatim.openstreetmap.org/search?q=hospital&format=json&lat=${latitude}&lon=${longitude}&limit=50&countrycodes=IN`
       );
-      const hospitalsData = await hospitalsResponse.json();
       
       const hospitalsList = (hospitalsData || [])
         .filter((h) => h.lat && h.lon)
@@ -148,10 +168,9 @@ export default function MapSection({ selectedLocation }) {
       setHospitals(hospitalsList);
 
       // Fetch police stations using Nominatim
-      const policeResponse = await fetch(
+      const policeData = await fetchNominatimJson(
         `https://nominatim.openstreetmap.org/search?q=police&format=json&lat=${latitude}&lon=${longitude}&limit=50&countrycodes=IN`
       );
-      const policeData = await policeResponse.json();
       
       const policeList = (policeData || [])
         .filter((p) => p.lat && p.lon)
@@ -183,10 +202,9 @@ export default function MapSection({ selectedLocation }) {
     // Using OpenStreetMap Geocoding as fallback
     try {
       // Try to fetch with different search terms
-      const hospitalsResponse = await fetch(
+      const hospitalsData = await fetchNominatimJson(
         `https://nominatim.openstreetmap.org/search?q=healthcare&format=json&lat=${latitude}&lon=${longitude}&limit=50`
       );
-      const hospitalsData = await hospitalsResponse.json();
       
       const hospitalsList = (hospitalsData || [])
         .filter((h) => h.lat && h.lon && 
@@ -205,10 +223,9 @@ export default function MapSection({ selectedLocation }) {
       }
 
       // For police, try different search
-      const policeResponse = await fetch(
+      const policeData = await fetchNominatimJson(
         `https://nominatim.openstreetmap.org/search?q=police%20station&format=json&lat=${latitude}&lon=${longitude}&limit=50`
       );
-      const policeData = await policeResponse.json();
       
       const policeList = (policeData || [])
         .filter((p) => p.lat && p.lon)

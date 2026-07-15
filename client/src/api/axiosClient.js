@@ -6,8 +6,7 @@ export const injectStore = (_store) => {
   store = _store;
 };
 
-// const BASE_URL = import.meta.env.EXPO_PUBLIC_BASE_URL || 'http://localhost:8000'; // Default to localhost if not set
-const BASE_URL ='http://localhost:8000'; // Default to localhost if not set
+const BASE_URL = (process.env.EXPO_PUBLIC_BASE_URL || 'http://localhost:8000').replace(/\/$/, '');
 
 // Create axios instance with base configuration
 const axiosClient = axios.create({

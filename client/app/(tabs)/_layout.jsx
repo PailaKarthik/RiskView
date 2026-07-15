@@ -11,15 +11,15 @@ export default function TabLayout() {
   const router = useRouter();
   const dispatch = useDispatch();
   const authState = useSelector((state) => state?.auth || {});
-  const { token } = authState;
+  const { token, isRestoring } = authState;
   const { unreadCount } = useSelector((state) => state?.notification || { unreadCount: 0 });
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (!token) {
+    if (!token && !isRestoring) {
       router.replace('/auth/login');
     }
-  }, [token, router]);
+  }, [token, isRestoring, router]);
 
   // Fetch unread count on mount
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function TabLayout() {
   // Setup push notifications for authenticated users
   usePushNotifications();
 
-  if (!token) return null;
+  if (!token || isRestoring) return null;
 
   return (
     <Tabs

@@ -16,6 +16,11 @@ export const registerForPushNotifications = async () => {
   try {
     console.log('📱 Registering for push notifications...');
 
+    if (Constants.appOwnership === 'expo') {
+      console.log('⚠️ Expo Go detected - skipping push registration');
+      return null;
+    }
+
     // Skip on web platform - push notifications not supported
     if (Platform.OS === 'web') {
       console.log('⚠️ Push notifications not available on web platform');

@@ -1,7 +1,7 @@
-import * as Location from 'expo-location';
-import * as TaskManager from 'expo-task-manager';
+import * as Location from "expo-location";
+import * as TaskManager from "expo-task-manager";
 
-const LOCATION_TASK_NAME = 'background-location-task';
+const LOCATION_TASK_NAME = "background-location-task";
 
 /**
  * Location Service - Handles all location-related operations
@@ -15,9 +15,9 @@ export const locationService = {
   requestLocationPermission: async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      return status === 'granted';
+      return status === "granted";
     } catch (error) {
-      console.error('❌ [Location Permission Error]', error);
+      console.error("❌ [Location Permission Error]", error);
       return false;
     }
   },
@@ -28,11 +28,10 @@ export const locationService = {
    */
   requestBackgroundLocationPermission: async () => {
     try {
-      const { status } =
-        await Location.requestBackgroundPermissionsAsync();
-      return status === 'granted';
+      const { status } = await Location.requestBackgroundPermissionsAsync();
+      return status === "granted";
     } catch (error) {
-      console.error('❌ [Background Location Permission Error]', error);
+      console.error("❌ [Background Location Permission Error]", error);
       return false;
     }
   },
@@ -43,14 +42,31 @@ export const locationService = {
    */
   getCurrentLocation: async () => {
     try {
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      });
+      // Check if device location services are enabled
+      const servicesEnabled = await Location.hasServicesEnabledAsync();
 
-      console.log('✅ [Location Fetched]', {
-        lat: location.coords.latitude,
-        lng: location.coords.longitude,
-      });
+      if (!servicesEnabled) {
+        throw new Error("Location services are disabled.");
+      }
+
+      // Request permission if needed
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        throw new Error("Location permission denied.");
+      }
+
+      // First try last known location
+      let location = await Location.getLastKnownPositionAsync();
+
+      // If unavailable, request a fresh GPS fix
+      if (!location) {
+        location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
+      }
+
+      console.log("✅ [Location]", location.coords);
 
       return {
         latitude: location.coords.latitude,
@@ -59,7 +75,7 @@ export const locationService = {
         altitude: location.coords.altitude,
       };
     } catch (error) {
-      console.error('❌ [Get Location Error]', error);
+      console.error("❌ [Get Location Error]", error);
       throw error;
     }
   },
@@ -78,7 +94,7 @@ export const locationService = {
           distanceInterval: 10, // Or 10 meters
         },
         (location) => {
-          console.log('🔄 [Location Updated]', {
+          console.log("🔄 [Location Updated]", {
             lat: location.coords.latitude,
             lng: location.coords.longitude,
           });
@@ -88,12 +104,12 @@ export const locationService = {
             longitude: location.coords.longitude,
             accuracy: location.coords.accuracy,
           });
-        }
+        },
       );
 
       return subscription;
     } catch (error) {
-      console.error('❌ [Watch Location Error]', error);
+      console.error("❌ [Watch Location Error]", error);
       return null;
     }
   },
@@ -107,24 +123,21 @@ export const locationService = {
       // Check if task is already defined
       const isTaskDefined = TaskManager.isTaskDefined(LOCATION_TASK_NAME);
       if (!isTaskDefined) {
-        TaskManager.defineTask(
-          LOCATION_TASK_NAME,
-          ({ data, error }) => {
-            if (error) {
-              console.error('❌ [Background Task Error]', error);
-              return;
-            }
-
-            if (data) {
-              const { locations } = data;
-              const location = locations[locations.length - 1];
-              console.log('🔄 [Background Location Updated]', {
-                lat: location.coords.latitude,
-                lng: location.coords.longitude,
-              });
-            }
+        TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+          if (error) {
+            console.error("❌ [Background Task Error]", error);
+            return;
           }
-        );
+
+          if (data) {
+            const { locations } = data;
+            const location = locations[locations.length - 1];
+            console.log("🔄 [Background Location Updated]", {
+              lat: location.coords.latitude,
+              lng: location.coords.longitude,
+            });
+          }
+        });
       }
 
       // Start background location tracking
@@ -135,9 +148,9 @@ export const locationService = {
         showsBackgroundLocationIndicator: true,
       });
 
-      console.log('✅ [Background location tracking started]');
+      console.log("✅ [Background location tracking started]");
     } catch (error) {
-      console.error('❌ [Start Background Tracking Error]', error);
+      console.error("❌ [Start Background Tracking Error]", error);
     }
   },
 
@@ -147,9 +160,9 @@ export const locationService = {
   stopBackgroundLocationTracking: async () => {
     try {
       await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
-      console.log('✅ [Background location tracking stopped]');
+      console.log("✅ [Background location tracking stopped]");
     } catch (error) {
-      console.error('❌ [Stop Background Tracking Error]', error);
+      console.error("❌ [Stop Background Tracking Error]", error);
     }
   },
 
@@ -159,11 +172,10 @@ export const locationService = {
    */
   isBackgroundLocationAvailable: async () => {
     try {
-      const isAvailable =
-        await Location.isBackgroundLocationAvailableAsync();
+      const isAvailable = await Location.isBackgroundLocationAvailableAsync();
       return isAvailable;
     } catch (error) {
-      console.error('❌ [Check Background Availability Error]', error);
+      console.error("❌ [Check Background Availability Error]", error);
       return false;
     }
   },
@@ -207,14 +219,15 @@ export const locationService = {
 
       if (result && result.length > 0) {
         const address = result[0];
-        const fullAddress = `${address.street || ''} ${address.city || ''} ${address.region || ''} ${address.postalCode || ''}`.trim();
-        console.log('✅ [Reverse Geocoding Success]', fullAddress);
+        const fullAddress =
+          `${address.street || ""} ${address.city || ""} ${address.region || ""} ${address.postalCode || ""}`.trim();
+        console.log("✅ [Reverse Geocoding Success]", fullAddress);
         return fullAddress;
       }
 
       return null;
     } catch (error) {
-      console.error('❌ [Reverse Geocoding Error]', error);
+      console.error("❌ [Reverse Geocoding Error]", error);
       return null;
     }
   },
@@ -230,7 +243,7 @@ export const locationService = {
 
       if (result && result.length > 0) {
         const coords = result[0];
-        console.log('✅ [Geocoding Success]', {
+        console.log("✅ [Geocoding Success]", {
           lat: coords.latitude,
           lng: coords.longitude,
         });
@@ -243,7 +256,7 @@ export const locationService = {
 
       return null;
     } catch (error) {
-      console.error('❌ [Geocoding Error]', error);
+      console.error("❌ [Geocoding Error]", error);
       return null;
     }
   },

@@ -7,11 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "riskview",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+
     "ios": {
       "supportsTablet": true
     },
@@ -22,7 +18,13 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.riskview",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAEur0v7LYrU5dqVoGn1NrvTgK2SkiXTZA"
+        }
+      }
     },
     "web": {
       "bundler": "metro",
@@ -31,31 +33,21 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": false
-    },
-    "extra": {
-      "projectId": "riskview-project-id"
-    },
-    "eas": {
-      "build": {
-        "preview": {
-          "android": {
-            "resourceClass": "default"
-          },
-          "ios": {
-            "resourceClass": "m1-medium"
-          }
-        },
-        "preview2": {
-          "android": {
-            "gradleCommand": ":app:assembleRelease"
-          }
-        },
-        "production": {}
-      }
     }
+    /* "extra": {
+      "projectId": "riskview-project-id"
+    } */
   }
 }

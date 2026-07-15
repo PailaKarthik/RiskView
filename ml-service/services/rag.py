@@ -33,8 +33,18 @@ CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 DEFAULT_K = 3
 
-PROMPT_TEMPLATE = """You are a travel safety assistant. Answer based ONLY on the provided reports.
-If there isn't enough information, say so clearly.
+PROMPT_TEMPLATE = """
+You are a travel safety assistant.
+
+Answer ONLY using the information provided in the reports.
+If the reports do not contain enough information, clearly say that there is insufficient information.
+
+Formatting Rules:
+- Respond in plain text only.
+- Do NOT use Markdown.
+- Do NOT use headings (#), bold (**), italics (*), bullet points, tables, or code blocks.
+- Write in complete, natural sentences and short paragraphs.
+- Keep the response concise and easy to read.
 
 Reports:
 {context}
@@ -42,7 +52,20 @@ Reports:
 Question:
 {question}
 
-Answer:"""
+Answer:
+"""
+
+import re
+
+def remove_markdown(text):
+    text = re.sub(r'```.*?```', '', text, flags=re.S)
+    text = re.sub(r'`([^`]*)`', r'\1', text)
+    text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
+    text = re.sub(r'\*(.*?)\*', r'\1', text)
+    text = re.sub(r'#+\s*', '', text)
+    text = re.sub(r'^\s*[-*+]\s+', '', text, flags=re.M)
+    text = re.sub(r'\[(.*?)\]\((.*?)\)', r'\1', text)
+    return text
 
 
 def _get_embeddings():
@@ -136,11 +159,12 @@ def answer_question(context: str, question: str, k: int = DEFAULT_K) -> RagRespo
         # Generate answer
         prompt = PROMPT_TEMPLATE.format(context=context_text, question=question.strip())
         answer = llm.generate_completion(prompt).strip()
-        
+        plain_text = remove_markdown(answer)
         logger.info(f"Generated answer using {len(retrieval_info)} chunks")
         
+        
         return RagResponse(
-            answer=answer,
+            answer=plain_text,
             retrieved_chunks=retrieval_info,
             sources_used=len(retrieval_info)
         )

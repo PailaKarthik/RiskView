@@ -2,7 +2,7 @@
 
 <img src="https://img.shields.io/badge/RiskView-Safety%20First-red?style=for-the-badge&logo=shield&logoColor=white" alt="RiskView" width="300"/>
 
-# 🛡️ RiskView
+# 🛡️ RiskView : [apk link](https://expo.dev/accounts/karthikpaila/projects/riskview/builds/5c4a893e-dc81-42c7-9b95-dbf877bd70d8)
 
 ### *Your Community-Powered Travel Safety Companion*
 

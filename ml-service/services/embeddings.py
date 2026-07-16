@@ -165,5 +165,12 @@ class EmbeddingService:
             logger.error(error_msg)
             raise EmbeddingServiceError(error_msg) from e
 
-# Create and expose singleton instance
-embedding_service = EmbeddingService()
+_embedding_service = None
+
+
+def get_embedding_service() -> EmbeddingService:
+    """Lazily create and return a singleton EmbeddingService."""
+    global _embedding_service
+    if _embedding_service is None:
+        _embedding_service = EmbeddingService()
+    return _embedding_service

@@ -24,14 +24,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Import routers
-from routing import health, validate, summarize, rag
+# Register routers lazily during startup to avoid importing heavy modules at import time
+@app.on_event("startup")
+def register_routers():
+    from routing import health, validate, summarize, rag
 
-# Register routers
-app.include_router(health.router, tags=["health"])
-app.include_router(validate.router, prefix="/api", tags=["validation"])
-app.include_router(summarize.router, prefix="/api", tags=["summarization"])
-app.include_router(rag.router, prefix="/api", tags=["rag"])
+    app.include_router(health.router, tags=["health"])
+    app.include_router(validate.router, prefix="/api", tags=["validation"])
+    app.include_router(summarize.router, prefix="/api", tags=["summarization"])
+    app.include_router(rag.router, prefix="/api", tags=["rag"])
 
 # Global exception handler
 @app.exception_handler(RequestValidationError)

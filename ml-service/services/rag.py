@@ -12,20 +12,13 @@ Pipeline: CHUNK → EMBED → INDEX → RETRIEVE → GENERATE
 
 import os
 
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_core.documents import Document
-from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
-from core.llm import llm, GroqLLMError
+from core.llm import get_llm, GroqLLMError
 from schemas.requests import RagResponse, RetrievalResult
 import logging
-from dotenv import load_dotenv
-
-load_dotenv()
-Embedding_Model_Name = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 
 logger = logging.getLogger(__name__)
 
+# Lazy singletons
 _vector_store = None
 _embeddings = None
 
@@ -72,9 +65,10 @@ def _get_embeddings():
     """Get or create embeddings model (singleton)."""
     global _embeddings
     if _embeddings is None:
-        _embeddings = HuggingFaceEmbeddings(
-            model_name=Embedding_Model_Name,
-        )
+        # Delay importing heavy embeddings class until needed
+        from services.embeddings import get_embedding_service
+
+        _embeddings = get_embedding_service().model
     return _embeddings
 
 
@@ -87,17 +81,24 @@ def _build_vector_store(context: str):
     
     logger.info("Building vector store...")
     
+    # Import splitter and Document lazily to reduce startup memory
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+    from langchain_core.documents import Document
+
     doc = Document(page_content=context.strip(), metadata={"source": "context"})
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=CHUNK_SIZE,
         chunk_overlap=CHUNK_OVERLAP,
         separators=["\n\n", "\n", " ", ""]
     )
-    
+
     chunks = splitter.split_documents([doc])
     logger.info(f"Created {len(chunks)} chunks")
     
     embeddings = _get_embeddings()
+    # Import FAISS lazily
+    from langchain_community.vectorstores import FAISS
+
     _vector_store = FAISS.from_documents(chunks, embeddings)
     logger.info("Vector store ready")
     
@@ -156,8 +157,9 @@ def answer_question(context: str, question: str, k: int = DEFAULT_K) -> RagRespo
         
         context_text = "\n\n---\n\n".join(context_parts)
         
-        # Generate answer
+        # Generate answer using lazy Groq LLM singleton
         prompt = PROMPT_TEMPLATE.format(context=context_text, question=question.strip())
+        llm = get_llm()
         answer = llm.generate_completion(prompt).strip()
         plain_text = remove_markdown(answer)
         logger.info(f"Generated answer using {len(retrieval_info)} chunks")

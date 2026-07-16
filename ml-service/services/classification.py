@@ -10,7 +10,7 @@ Flow: Text → Vector → Compare → Score → Best Category
 """
 
 import numpy as np
-from services.embeddings import embedding_service
+from services.embeddings import get_embedding_service
 from services.keywords_database import get_all_keywords, get_categories
 import logging
 from typing import Dict, Tuple
@@ -49,25 +49,24 @@ class CategoryValidator:
     def __init__(self, threshold: float = VALID_THRESHOLD):
         self.threshold = threshold
         self._keyword_embeddings: Dict[str, np.ndarray] = {}
-        self._initialize_keywords()
-        logger.info(f"CategoryValidator ready (threshold: {threshold})")
+        logger.info(f"CategoryValidator created (threshold: {threshold})")
     
-    def _initialize_keywords(self):
-        """STEP 1: Load and cache keyword embeddings for all categories."""
+    def _load_category_embeddings(self, category: str):
+        """Load and cache embeddings for a single category on demand."""
         try:
-            for category in get_categories():
-                # Get all keywords for this category
-                keywords = get_all_keywords(category)
-                
-                # Convert each keyword to a vector (embedding)
-                embeddings = embedding_service.get_embeddings(keywords)
-                
-                # Store for later use during classification
-                self._keyword_embeddings[category] = embeddings
-                
-                logger.info(f"Loaded {len(keywords)} keywords for '{category}'")
+            if category in self._keyword_embeddings:
+                return
+            keywords = get_all_keywords(category)
+            if not keywords:
+                self._keyword_embeddings[category] = np.zeros((0,))
+                return
+
+            embedding_service = get_embedding_service()
+            embeddings = embedding_service.get_embeddings(keywords)
+            self._keyword_embeddings[category] = embeddings
+            logger.info(f"Loaded {len(keywords)} keywords for '{category}'")
         except Exception as e:
-            msg = f"Failed to initialize keywords: {str(e)}"
+            msg = f"Failed to load keywords for {category}: {str(e)}"
             logger.error(msg)
             raise ClassificationError(msg) from e
     
@@ -83,7 +82,11 @@ class CategoryValidator:
         scores = {}
         matches = {}
         
-        for category, keyword_embeddings in self._keyword_embeddings.items():
+        for category in get_categories():
+            # Ensure embeddings for this category are loaded lazily
+            if category not in self._keyword_embeddings:
+                self._load_category_embeddings(category)
+            keyword_embeddings = self._keyword_embeddings.get(category, np.array([]))
             # COMPARE: Generate similarity score between text and each keyword vector
             # Result: [0.92, 0.45, 0.88, 0.12, ...] each number is similarity to one keyword
             similarities = np.dot(keyword_embeddings, text_embedding)
@@ -134,6 +137,7 @@ class CategoryValidator:
         
         try:
             # STEP 1: Convert input text to a vector (embedding)
+            embedding_service = get_embedding_service()
             text_embedding = embedding_service.get_embedding(text)
             
             # STEP 2: Score all categories by comparing with keywords
@@ -176,18 +180,23 @@ class CategoryValidator:
             raise ClassificationError("Text cannot be empty")
         if not category or not isinstance(category, str) or len(category.strip()) == 0:
             raise ClassificationError("Category cannot be empty")
-        if category not in self._keyword_embeddings:
-            available = list(self._keyword_embeddings.keys())
+        canonical = category.upper()
+        if canonical not in get_categories():
+            available = get_categories()
             raise ClassificationError(f"Unknown category '{category}'. Available: {available}")
+        # Ensure embeddings for requested category are loaded
+        if canonical not in self._keyword_embeddings:
+            self._load_category_embeddings(canonical)
         
         try:
             # Classify the text
+            embedding_service = get_embedding_service()
             text_embedding = embedding_service.get_embedding(text)
             scores, _ = self._score_categories(text_embedding)
             
             # Get predictions
             predicted_category = max(scores, key=scores.get)  # What we think it is
-            selected_score = scores[category]                  # How well it matches requested category
+            selected_score = scores.get(canonical, 0.0)       # How well it matches requested category
             
             # VALIDATION: Both conditions must be true
             is_match = (
@@ -204,10 +213,15 @@ class CategoryValidator:
             raise ClassificationError(msg) from e
 
 
-# ============================================================================
-# SINGLETON INSTANCE - Created once at startup
-# ============================================================================
-validator = CategoryValidator(threshold=VALID_THRESHOLD)
+_validator = None
+
+
+def get_validator() -> CategoryValidator:
+    """Lazily create and return a CategoryValidator singleton."""
+    global _validator
+    if _validator is None:
+        _validator = CategoryValidator(threshold=VALID_THRESHOLD)
+    return _validator
 
 
 # ============================================================================
@@ -224,7 +238,7 @@ def classify(text: str) -> Dict:
     Returns:
         category name (e.g., "scam", "danger")
     """
-    category, confidence, _ = validator.classify(text)
+    category, confidence, _ = get_validator().classify(text)
     return {"category": category, "confidence": confidence}
 
 
@@ -243,8 +257,8 @@ def validate(text: str, category: str) -> Dict:
             "confidence": 0.48       # How confident the classification is
         }
     """
-    is_valid = validator.validate(text, category)
-    _, confidence, _ = validator.classify(text)
+    is_valid = get_validator().validate(text, category)
+    _, confidence, _ = get_validator().classify(text)
     return {
         "valid": is_valid,
         "category": category,

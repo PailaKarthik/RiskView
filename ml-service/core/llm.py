@@ -147,5 +147,12 @@ Answer:"""
         
         return self.generate_completion(prompt)
 
-# Create and expose singleton instance
-llm = GroqLLM()
+_llm = None
+
+
+def get_llm() -> GroqLLM:
+    """Lazily create and return a singleton GroqLLM instance."""
+    global _llm
+    if _llm is None:
+        _llm = GroqLLM()
+    return _llm

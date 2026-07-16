@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from schemas.requests import SummarizeAllRequest
 from prompts.summarize import SUMMARIZE_ALL_REPORTS
-from core.llm import llm, GroqLLMError
+from core.llm import get_llm, GroqLLMError
 from collections import Counter
 import logging
 
@@ -74,7 +74,7 @@ async def summarize_all_reports(request: SummarizeAllRequest) -> SummarizeAllRes
         )
         
         logger.info(f"Summarizing {total_reports} reports from this location...")
-        summary = llm.generate_completion(prompt).strip()
+        summary = get_llm().generate_completion(prompt).strip()
         # plain_text = remove_markdown(summary)
         logger.info(f"Summary generated successfully")
         

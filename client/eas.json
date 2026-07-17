@@ -1,21 +1,22 @@
 {
   "cli": {
-    "version": ">= 16.0.0"
+    "version": ">=16.0.0"
   },
   "build": {
     "preview": {
+      "distribution": "internal",
       "android": {
+        "buildType": "apk",
         "resourceClass": "default"
       },
       "ios": {
         "resourceClass": "m1-medium"
       }
     },
-    "preview2": {
+    "production": {
       "android": {
-        "gradleCommand": ":app:assembleRelease"
+        "buildType": "app-bundle"
       }
-    },
-    "production": {}
+    }
   }
 }

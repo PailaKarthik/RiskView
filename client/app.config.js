@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import "dotenv/config";
 
 export default {
   expo: {
@@ -15,7 +15,7 @@ export default {
     },
 
     android: {
-      package: "com.anonymous.riskview",
+      package: "com.karthikpaila.riskview",
       predictiveBackGestureEnabled: false,
 
       adaptiveIcon: {
@@ -39,6 +39,8 @@ export default {
     },
 
     plugins: [
+      "expo-status-bar",
+      "expo-web-browser",
       "expo-router",
       "expo-font",
       [
@@ -53,6 +55,11 @@ export default {
 
     experiments: {
       typedRoutes: false,
+    },
+    extra: {
+      eas: {
+        projectId: "d5d68452-7da6-4308-aec0-bcaac8672725",
+      },
     },
   },
 };
